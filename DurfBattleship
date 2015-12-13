@@ -1,3 +1,18 @@
+/*
+Critical:
+[]comment out showing where the ships are in setTarget
+[]change the dialog in playerHitCheck to something like "Your shot missed! Reload!"
+[]change the dialog when the computer is firing to something like "The computer's shot missed!"
+
+Suggestions:
+[]declare all variables at the beginning of main, it makes it easier to keep track of them.
+[]make seperate counters for the amount of targets hit by the player and the computer, then display the numbers at the end along and make the winner whoever shot more. 
+[]rename gameOver method to gameOverCheck
+[]create a method named initializeTargetAmounts 
+[]create a way to restart the game.  Maybe another while loop around still playing that you can reset the numbers, initializeBoard, and then set stillRunning to true again.
+
+
+
 import java.util.Random;
 import java.util.Scanner;
 /**
@@ -20,14 +35,13 @@ public class ShotInTheDark {
      */
     public static final int S = 10;    
     public static void main(String[] args) {
-        int[][] dark = new int[S][S];//Declars the 2D array which both Player One and Computer will fire at.
+        int[][] dark = new int[S][S];//Declares the 2D array which both Player One and Computer will fire at.
         int[][] target = new int[S][S];//Declares the 2D array where either the index contains a target '1' or does not '-1'.
         boolean stillPlaying = true;//This boolean will be active as long as there are targets witin the 'target' array.
         String currentPlayer = "Player One";
-        boolean isPlayerOneTurn = true;
         Scanner ibu = new Scanner(System.in);        
 
-        System.out.println("Welcome to Shot in the Dark " + currentPlayer + "!");//Start program prompt.
+        System.out.println("Welcome to Shot in the Dark! Where the only tactic is to spray and pray!");//Start program prompt.
         initializeBoard(dark);//Initializes all indexes in the 2D 'dark' array as -1 that is neither shot at, contains a target, or a hit target.
         initializeBoard(target);//Initializes all indexes in the 2D 'target' array as -1 that is neither shot at, contains a target, or a hit target.
 
@@ -41,37 +55,28 @@ public class ShotInTheDark {
         System.out.println("OPEN FIRE!!!");//prompt that the game has begun.
         displayBoard(dark);//Displays the current values and coorisponding symbols of the state of the dark board.
         while(stillPlaying == true) {
+            currentPlayer = "Player One";
             System.out.println(currentPlayer + " enter the COLUMN (LEFT NUMBERS) you want to shoot:");
             int col = ibu.nextInt();
             System.out.println("Enter the ROW (TOP NUMBERS) you want to shoot:");
             int row = ibu.nextInt();
-            dark[col][row] = 0;                     
-            playerHitCheck(target, dark, row, col,targetAmount); 
-            stillPlaying =  gameOver(targetAmount);
-            isPlayerOneTurn = !isPlayerOneTurn;
+            dark[col][row] = 0;
+            targetAmount = playerHitCheck(target, dark, row, col, targetAmount);
+            stillPlaying = gameOver(targetAmount);
+            if(stillPlaying == false){
+                break;
+            }
+            currentPlayer = "Computer";
             System.out.print("The computer is firing at ");
             Random rand = new Random();
             int randomNumberY = rand.nextInt(S);
             int randomNumberX = rand.nextInt(S);
             dark[randomNumberY][randomNumberX] = 0;
             System.out.println("COLUMN " + randomNumberY + " and ROW " + randomNumberX + "!");            
-            hitCheck(target, dark, randomNumberX, randomNumberY, targetAmount);
+            targetAmount = computerHitCheck(target, dark, randomNumberX, randomNumberY, targetAmount);
             stillPlaying = gameOver(targetAmount);
-            isPlayerOneTurn = isPlayerOneTurn;
         }
         System.out.println("Game Over " + currentPlayer + " wins!");
-    }
-
-    public static int contains(int[][] input, int target) {//This method checks to see if a argued value is contained within an (int) array.
-        int count = 0;
-        for(int col = 0; col < input.length; col++) {//This for loop iterates the variable 'i' that "walks over" (scans all the values within) the argued array.
-            for(int row = 0; row < input.length; row++) {
-                if (input[col][row] == target) {//As the for loop iterates the values of the array, if the condition is met when the variable 'i' is equal to the value of the argued intiger from main (target) then the boolean condition will return true.
-                    count++;//The condition is met that the value of target is equal tp some iteration of the argued array.
-                }
-            }
-        }
-        return count;//If the condition is not met, then false is returned.
     }
 
     public static boolean gameOver(int shot) {
@@ -83,6 +88,20 @@ public class ShotInTheDark {
     }
 
     public static int playerHitCheck(int[][] a, int[][] b, int row, int col, int shot){
+        if (a[col][row] == 1) {
+            a[col][row] = 2;
+            b[col][row] = 2;
+            System.out.println("The shot at COLUMN " + col + " and ROW " + row + " HIT THE TARGET!");        
+            shot--;
+        }
+        else {
+            System.out.println("The shot missed! Reload!");
+        }        
+        displayBoard(b);
+        return shot;
+    }
+
+    public static int computerHitCheck(int[][] a, int[][] b, int row, int col, int shot){
         if (a[col][row] == 1) {
             a[col][row] = 2;
             b[col][row] = 2;
