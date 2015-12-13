@@ -1,0 +1,173 @@
+import java.util.Random;
+import java.util.Scanner;
+/**
+Michael Durfee - CSS161 - Professor Nash - 9DEC2015 - Final Homework: Shot in the Dark
+
+Welcome to Shot in the Dark. Here is some psudocode to summarize how this game works.
+Setting locations of a target on int[][] target.
+Firing at locations on int[][] dark and changing values to be displayed as different symbols.
+Compairing the location of the shot to the location on int[][] dark to int[][] target see if it is the same location.
+The computer takes a random shot at the dark (changing the symbol).
+Compairing the location of the shot to int[][] target to see if it is a target.
+When all targets are shot game over.
+ */
+public class ShotInTheDark {
+    /**
+    This final variable determines:
+    How big the board is.
+    The column and row headers for the board.
+    The parameters for the random intigers for: Target placement / Computer random guesses / Method for printing the board.
+     */
+    public static final int S = 10;    
+    public static void main(String[] args) {
+        int[][] dark = new int[S][S];//Declars the 2D array which both Player One and Computer will fire at.
+        int[][] target = new int[S][S];//Declares the 2D array where either the index contains a target '1' or does not '-1'.
+        boolean stillPlaying = true;//This boolean will be active as long as there are targets witin the 'target' array.
+        String currentPlayer = "Player One";
+        boolean isPlayerOneTurn = true;
+        Scanner ibu = new Scanner(System.in);        
+
+        System.out.println("Welcome to Shot in the Dark " + currentPlayer + "!");//Start program prompt.
+        initializeBoard(dark);//Initializes all indexes in the 2D 'dark' array as -1 that is neither shot at, contains a target, or a hit target.
+        initializeBoard(target);//Initializes all indexes in the 2D 'target' array as -1 that is neither shot at, contains a target, or a hit target.
+
+        System.out.println("Select how many targets you want to engage:");
+        System.out.println("(1) 1 Target (Hard)");
+        System.out.println("(2) 2 Target (Moderate)");
+        System.out.println("(3) 3 Target (Easy)");
+        int targetAmount = ibu.nextInt();
+        setTrgt(target, targetAmount);//This method call gives the player an option to place 1, 2, or 3 randomly plaed targets on the board.
+
+        System.out.println("OPEN FIRE!!!");//prompt that the game has begun.
+        displayBoard(dark);//Displays the current values and coorisponding symbols of the state of the dark board.
+        while(stillPlaying == true) {
+            System.out.println(currentPlayer + " enter the COLUMN (LEFT NUMBERS) you want to shoot:");
+            int col = ibu.nextInt();
+            System.out.println("Enter the ROW (TOP NUMBERS) you want to shoot:");
+            int row = ibu.nextInt();
+            dark[col][row] = 0;                     
+            playerHitCheck(target, dark, row, col,targetAmount); 
+            stillPlaying =  gameOver(targetAmount);
+            isPlayerOneTurn = !isPlayerOneTurn;
+            System.out.print("The computer is firing at ");
+            Random rand = new Random();
+            int randomNumberY = rand.nextInt(S);
+            int randomNumberX = rand.nextInt(S);
+            dark[randomNumberY][randomNumberX] = 0;
+            System.out.println("COLUMN " + randomNumberY + " and ROW " + randomNumberX + "!");            
+            hitCheck(target, dark, randomNumberX, randomNumberY, targetAmount);
+            stillPlaying = gameOver(targetAmount);
+            isPlayerOneTurn = isPlayerOneTurn;
+        }
+        System.out.println("Game Over " + currentPlayer + " wins!");
+    }
+
+    public static int contains(int[][] input, int target) {//This method checks to see if a argued value is contained within an (int) array.
+        int count = 0;
+        for(int col = 0; col < input.length; col++) {//This for loop iterates the variable 'i' that "walks over" (scans all the values within) the argued array.
+            for(int row = 0; row < input.length; row++) {
+                if (input[col][row] == target) {//As the for loop iterates the values of the array, if the condition is met when the variable 'i' is equal to the value of the argued intiger from main (target) then the boolean condition will return true.
+                    count++;//The condition is met that the value of target is equal tp some iteration of the argued array.
+                }
+            }
+        }
+        return count;//If the condition is not met, then false is returned.
+    }
+
+    public static boolean gameOver(int shot) {
+        boolean win = true;
+        if(shot == 0) {
+            win = false;
+        }        
+        return win;
+    }
+
+    public static int playerHitCheck(int[][] a, int[][] b, int row, int col, int shot){
+        if (a[col][row] == 1) {
+            a[col][row] = 2;
+            b[col][row] = 2;
+            System.out.println("The shot at COLUMN " + col + " and ROW " + row + " HIT THE TARGET!");        
+            shot--;
+        }
+        else {
+            System.out.println("The shot missed! Reload!");
+        }        
+        displayBoard(b);
+        return shot;
+    }
+
+    public static void displayBoard(int[][] in) {
+        for(int i = 0; i < S; i++){
+            System.out.print("\t" + i);//Prints the row numers
+        }
+        System.out.println();
+        for(int col = 0; col < S; col++){
+            System.out.print((col) + "");//Prints the column numbers
+            for(int row = 0; row < S; row++){
+                if(in[col][row] == -1) {//Initialized value
+                    System.out.print("\t" + "~");
+                }
+                else if(in[col][row] == 0) {
+                    System.out.print("\t" + "X");
+                }
+                else if(in[col][row] == 1) {
+                    System.out.print("\t" + "S");
+                }
+                else if(in[col][row] == 2) {
+                    System.out.print("\t" + "!");
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    public static void initializeBoard(int[][] in){//This method sets all index values within an array equal to -1 which will display as a neutral "~"
+        for (int y = 0; y < in.length; y++){
+            for (int x = 0; x < in.length; x++){
+                in[x][y] = -1;
+            }
+        }
+    }
+
+    public static int[][] setTrgt(int[][] in, int selection) {//Prints the current values of the array to screen.
+        Random rand = new Random();
+        switch(selection) {
+            case 1:
+            if(selection == 1) {
+                int oneTrgtY = rand.nextInt(S);
+                int oneTrgtX = rand.nextInt(S);
+                in[oneTrgtY][oneTrgtX] = 1;
+                System.out.println("The target is located at ROW " + oneTrgtX + " and COLUMN " + oneTrgtY + ".");
+            }
+            break;
+            case 2:
+            if(selection == 2) {
+                int twoTrgt1Y = rand.nextInt(S);
+                int twoTrgt1X = rand.nextInt(S);
+                in[twoTrgt1Y][twoTrgt1X] = 1;
+                int twoTrgt2Y = rand.nextInt(S);
+                int twoTrgt2X = rand.nextInt(S);
+                in[twoTrgt2Y][twoTrgt2X] = 1;
+                System.out.println("The target is located at ROW " + twoTrgt1X + " and COLUMN " + twoTrgt1Y + ".");
+                System.out.println("The target is located at ROW " + twoTrgt2X + " and COLUMN " + twoTrgt2Y + ".");
+            }
+            break;
+            case 3:
+            if(selection == 3) {
+                int threeTrgt1Y = rand.nextInt(S);
+                int threeTrgt1X = rand.nextInt(S);
+                in[threeTrgt1Y][threeTrgt1X] = 1;
+                int threeTrgt2Y = rand.nextInt(S);
+                int threeTrgt2X = rand.nextInt(S);
+                in[threeTrgt2Y][threeTrgt2X] = 1;
+                int threeTrgt3Y = rand.nextInt(S);
+                int threeTrgt3X = rand.nextInt(S);
+                in[threeTrgt3Y][threeTrgt3X] = 1;
+                System.out.println("The target is located at ROW " + threeTrgt1X + " and COLUMN " + threeTrgt1Y + ".");
+                System.out.println("The target is located at ROW " + threeTrgt2X + " and COLUMN " + threeTrgt2Y + ".");
+                System.out.println("The target is located at ROW " + threeTrgt3X + " and COLUMN " + threeTrgt3Y + ".");
+            }
+        }        
+        return in;
+    }
+}
