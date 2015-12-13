@@ -10,12 +10,12 @@ Suggestions:
 []rename gameOver method to gameOverCheck
 []create a method named initializeTargetAmounts 
 []create a way to restart the game.  Maybe another while loop around still playing that you can reset the numbers, initializeBoard, and then set stillRunning to true again.
-
+/**
 
 
 import java.util.Random;
 import java.util.Scanner;
-/**
+
 Michael Durfee - CSS161 - Professor Nash - 9DEC2015 - Final Homework: Shot in the Dark
 
 Welcome to Shot in the Dark. Here is some psudocode to summarize how this game works.
