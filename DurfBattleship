@@ -1,3 +1,11 @@
+/*
+System.out.println("Enter the COLUMN you want to shoot:");//Second coordinate coorisponds to the row.
+int row = ibu.nextInt();
+System.out.println("Player One enter the ROW you want to shoot:");//First coordinate the player enters coorisponds to the column.
+int col = ibu.nextInt();
+*/
+
+
 package durf;
 
 import java.util.Random;
@@ -45,10 +53,10 @@ public class NewEnd {
         System.out.println("OPEN FIRE!!!");//prompt that the game has begun.
         displayBoard(dark);//Displays the current values and coorisponding symbols of the state of the dark board.
         while (stillPlaying == true) {
-            System.out.println("Player One enter the COLUMN (LEFT NUMBERS) you want to shoot:");//First coordinate the player enters coorisponds to the column.
-            int col = ibu.nextInt();
-            System.out.println("Enter the ROW (TOP NUMBERS) you want to shoot:");//Second coordinate coorisponds to the row.
+            System.out.println("Enter the COLUMN you want to shoot:");//Second coordinate coorisponds to the row.
             int row = ibu.nextInt();
+            System.out.println("Player One enter the ROW you want to shoot:");//First coordinate the player enters coorisponds to the column.
+            int col = ibu.nextInt();
             dark[col][row] = 0;//Takes those values
             targetAmount = playerHitCheck(target, dark, pScore, row, col, targetAmount);//The target amount is decreased each time a successful hit is registered.
             stillPlaying = gameOver(targetAmount);//If the target amount reaches zero the game is over.
